@@ -41,6 +41,7 @@ CORE_IMAGE_BASE_INSTALL_append = " \
     vim \
     zram \
     git \
+    screen \
     ${@bb.utils.contains('DISTRO_FEATURES', 'sota', 'aktualizr-cert-provider aktualizr-configs', ' ', d)} \
 "
 
