@@ -5,6 +5,7 @@ LIC_FILES_CHKSUM = "file://${COREBASE}/meta/files/common-licenses/MIT;md5=0835ad
 SRC_URI = "file://machineID \
            file://machineProduct \
            file://screenResolution \
+           file://host_platform \
            "
 
 FILES_${PN} += " \
@@ -26,5 +27,6 @@ do_install() {
     install -m 0644 ${S}/machineID ${D}/etc/xact
     install -m 0644 ${S}/machineProduct ${D}/etc/xact
     install -m 0644 ${S}/screenResolution ${D}/etc/xact
+    install -m 0644 ${S}/host_platform ${D}/etc/xact
 }
 
