@@ -1,0 +1,30 @@
+#!/bin/bash
+
+cmd=$1
+
+if [ ! $cmd ]; then
+  echo No command specified, exiting
+elif [ $cmd == "hostname" ]; then
+  hostname=$2
+  if [ $hostname ]; then
+    echo Setting hostname to $hostname
+    hostname $hostname
+    echo $hostname > /etc/hostname
+  fi
+elif [ $cmd == "reboot" ]; then
+  systemctl reboot
+elif [ $cmd == "init_docker" ]; then
+  $fil="/run/xact/card1/docker_import.tar"
+  if [ -f $fil ]; then
+    echo Importing docker container $fil
+  fi
+fi
+
+apalis-0:~$ cat /usr/local/bin/xact-init
+#!/bin/bash
+
+
+if [ -f /commands.txt ]; then
+  echo Has commands in root
+fi
+
