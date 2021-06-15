@@ -11,6 +11,8 @@ IMAGE_LINK_NAME = "${IMAGE_BASENAME}${IMAGE_BASENAME_SUFFIX}-${MACHINE}"
 
 IMAGE_FEATURES += "ssh-server-openssh bash-completion-pkgs"
 
+XACT_IMAGE_VERSION = "1"
+
 # Base packages
 CORE_IMAGE_BASE_INSTALL_append = " \
     kernel-modules \
@@ -79,9 +81,36 @@ nss_altfiles_set_users_groups () {
 	done
 }
 
+check_xact_filesystem () {
+	echo "TA_iMX8_Linux" > ${IMAGE_ROOTFS}${sysconfdir}/xact/host_platform
+	echo ${XACT_IMAGE_VERSION} > ${IMAGE_ROOTFS}${sysconfdir}/xact/image_version
+
+        if [ -n "${XACT_MACHINE_PRODUCT}" ]; then
+	        echo ${XACT_MACHINE_PRODUCT} > ${IMAGE_ROOTFS}${sysconfdir}/xact/machineProduct
+	else
+                bbwarn "XACT_MACHINE_PRODUCT is missing, must be defined in xm*.bb"
+        fi
+
+        if [ -n "${XACT_MACHINE_ID}" ]; then
+	        echo ${XACT_MACHINE_ID} > ${IMAGE_ROOTFS}${sysconfdir}/xact/machineID
+	else
+                bbwarn "XACT_MACHINE_ID is missing, must be defined in xm*.bb"
+        fi
+
+        if [ -n "${XACT_FS_RESOLUTION}" ]; then
+	        echo ${XACT_FS_RESOLUTION} > ${IMAGE_ROOTFS}${sysconfdir}/xact/screenResolution
+	else
+                bbwarn "XACT_FS_RESOLUTION is missing, must be defined in xm*.bb"
+        fi
+}
+
+ROOTFS_POSTPROCESS_COMMAND += "check_xact_filesystem ; "
+
 CORE_IMAGE_BASE_INSTALL_append_mx8 = " \
     kernel-module-imx-gpu-viv \
 "
+
+OSTREE_KERNEL_ARGS = "quiet logo.nologo console=ttynull video=HDMI-A-1:${XACT_FS_RESOLUTION} vt.global_cursor_default=0 plymouth.ignore-serial-consoles splash"
 
 # include nss-altfiles support
 CORE_IMAGE_BASE_INSTALL_append = ' ${@bb.utils.contains("DISTRO_FEATURES", "stateless-system", "nss-altfiles", "",d)}'
