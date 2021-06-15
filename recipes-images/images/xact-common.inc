@@ -26,6 +26,7 @@ CORE_IMAGE_BASE_INSTALL_append = " \
     i2c-tools \
     udev-toradex-rules \
     network-configuration \
+    ostree-devicetree-overlays \
     kernel-module-imx-gpu-viv \
     cpufrequtils \
     curl \
@@ -67,7 +68,7 @@ nss_altfiles_set_users_groups () {
 	install -m 644 ${override_dir}/passwd ${pseudo_dir}
 	install -m 644 ${override_dir}/group ${pseudo_dir}
 	install -m 400 ${override_dir}/shadow ${pseudo_dir}
-	cp -a ${pseudo_dir} ${IMAGE_ROOTFS}${libdir}
+	cp -a ${pseudo_dir}/* ${IMAGE_ROOTFS}${libdir}
 
 	for file in passwd group shadow; do
 		cat > ${override_dir}/${file} <<- EOF
@@ -77,6 +78,10 @@ nss_altfiles_set_users_groups () {
 		grep -r torizon ${IMAGE_ROOTFS}${libdir}/${file} >> ${override_dir}/${file}
 	done
 }
+
+CORE_IMAGE_BASE_INSTALL_append_mx8 = " \
+    kernel-module-imx-gpu-viv \
+"
 
 # include nss-altfiles support
 CORE_IMAGE_BASE_INSTALL_append = ' ${@bb.utils.contains("DISTRO_FEATURES", "stateless-system", "nss-altfiles", "",d)}'
