@@ -1,4 +1,4 @@
-OSTREE_KERNEL_ARGS = "quiet logo.nologo fbcon=map:2 video=1024x600-16@60 consoleblank=0 vt.global_cursor_default=0 plymouth.ignore-serial-consoles splash"
+OSTREE_KERNEL_ARGS = "quiet logo.nologo console=ttynull video=HDMI-A-1:1024x600 vt.global_cursor_default=0 plymouth.ignore-serial-consoles splash"
 
 OSTREE_DEPLOY_DEVICETREE = "1"
 
