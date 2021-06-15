@@ -14,6 +14,7 @@ CORE_IMAGE_BASE_INSTALL_append = " \
     python3-docker-compose \
     docker-compose-up \
     xact-filesystem \
+    xact-init \
 "
 
 inherit extrausers

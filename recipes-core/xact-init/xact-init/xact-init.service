@@ -1,0 +1,12 @@
+[Unit]
+Description=Xact Boot Script
+RequiresMountsFor=/run
+Conflicts=plymouth-quit.service
+After=systemd-user-sessions.service plymouth-quit-wait.service
+
+[Service]
+StandardError=journal
+PermissionsStartOnly=true
+
+ExecStart=/bin/bash -c xact-init
+
