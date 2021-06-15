@@ -22,6 +22,8 @@ CORE_IMAGE_BASE_INSTALL_append = " \
     torizon-conf \
     torizon-users \
     tzdata \
+    evtest \
+    i2c-tools \
     udev-toradex-rules \
     network-configuration \
     kernel-module-imx-gpu-viv \
@@ -33,6 +35,7 @@ CORE_IMAGE_BASE_INSTALL_append = " \
     less \
     openssh-sftp-server \
     packagegroup-core-full-cmdline-multiuser \
+    ostree-devicetree-overlays \
     packagegroup-core-full-cmdline-utils \
     rsync \
     sshfs-fuse \
@@ -42,7 +45,11 @@ CORE_IMAGE_BASE_INSTALL_append = " \
     zram \
     git \
     screen \
-    ${@bb.utils.contains('DISTRO_FEATURES', 'sota', 'aktualizr-cert-provider aktualizr-configs', ' ', d)} \
+    kernel-devsrc \
+    kernel-module-wireguard \
+    wireguard-tools \
+    fluent-bit \
+    neofetch \
 "
 
 # Enough free space for a full image update
@@ -60,7 +67,7 @@ nss_altfiles_set_users_groups () {
 	install -m 644 ${override_dir}/passwd ${pseudo_dir}
 	install -m 644 ${override_dir}/group ${pseudo_dir}
 	install -m 400 ${override_dir}/shadow ${pseudo_dir}
-	cp -a ${pseudo_dir}/* ${IMAGE_ROOTFS}${libdir}
+	cp -a ${pseudo_dir} ${IMAGE_ROOTFS}${libdir}
 
 	for file in passwd group shadow; do
 		cat > ${override_dir}/${file} <<- EOF
