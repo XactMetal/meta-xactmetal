@@ -1,0 +1,10 @@
+[Unit]
+Description=Xact Boot Splash
+
+[Service]
+StandardError=journal
+ExecStart=/bin/bash -c xact-run logo
+
+[Install]
+WantedBy=basic.target
+

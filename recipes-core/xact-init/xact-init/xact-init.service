@@ -1,12 +1,11 @@
 [Unit]
 Description=Xact Boot Script
-RequiresMountsFor=/run
-Conflicts=plymouth-quit.service
-After=systemd-user-sessions.service plymouth-quit-wait.service
+After=boot-complete.target usr-share-xact-card1.mount
 
 [Service]
 StandardError=journal
-PermissionsStartOnly=true
-
 ExecStart=/bin/bash -c xact-init
+
+[Install]
+WantedBy=multi-user.target
 
