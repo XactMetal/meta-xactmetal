@@ -1,30 +1,58 @@
 #!/bin/bash
 
-cmd=$1
+CARD="/usr/share/xact/card1"
+LOGFILE="$CARD/xact-init.log"
 
-if [ ! $cmd ]; then
-  echo No command specified, exiting
-elif [ $cmd == "hostname" ]; then
-  hostname=$2
-  if [ $hostname ]; then
-    echo Setting hostname to $hostname
-    hostname $hostname
-    echo $hostname > /etc/hostname
-  fi
-elif [ $cmd == "reboot" ]; then
-  systemctl reboot
-elif [ $cmd == "init_docker" ]; then
-  $fil="/run/xact/card1/docker_import.tar"
-  if [ -f $fil ]; then
-    echo Importing docker container $fil
+df
+mount -a
+
+{
+if mount | grep $CARD > /dev/null; then
+  date
+  # Card is mounted
+  if [[ -f $CARD/commands.txt ]]; then
+    # Has commands
+    xact-run logo
+    while true; do
+      cmd=()
+      while IFS= read -r line; do
+        cmd+=("$line")
+      done <<< $(xact-commands-txt.py peek $CARD/commands.txt)
+      echo $cmd
+      echo ${cmd[0]}
+      echo ${cmd[1]}
+        if [[ ${cmd[0]} == "e" ]]; then
+	  break
+        fi
+	xact-run ${cmd[1]}
+	exit_code=$?
+	echo Exit code: $exit_code
+	if [[ ${cmd[0]} != *"?"* ]]; then
+	  if [[ $exit_code != 0 ]]; then
+            echo "Command failed: ${cmd[1]}"
+            xact-run disp "Command failed:\n${cmd[1]}"
+            exit $exit_code
+	  fi
+	fi
+        xact-commands-txt.py pop $CARD/commands.txt
+    done
+  else
+    # No commands file
+    echo "No commands file found" | tee $LOGFILE
   fi
 fi
 
-apalis-0:~$ cat /usr/local/bin/xact-init
-#!/bin/bash
+}
+# >> $LOGFILE 2>&1
 
-
-if [ -f /commands.txt ]; then
-  echo Has commands in root
+xact-run docker-start
+exit_code=$?
+if [[ $exit_code != 0 ]]; then
+  xact-run disp "Could not start container"
+fi
+xact-run docker-launch
+exit_code=$?
+if [[ $exit_code != 0 ]]; then
+  xact-run disp "Could not launch container"
 fi
 

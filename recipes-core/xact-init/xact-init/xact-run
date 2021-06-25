@@ -1,22 +1,121 @@
 #!/bin/bash
+set -e # Exit on fail
+set -o pipefail # Exit on fail within pipe
+
+disp () {
+  res=`cat /etc/xact/screenResolution`
+  res2=(${res/x/ })
+  res3=${res##*x}
+  [[ -f /etc/xact/flipScreen ]] && f="-x -y" || f=""
+
+  if [ -z ${1+x} ]; then
+    xact-init-img $res2 $res3 $f > /dev/fb0
+  else
+    xact-init-img $res2 $res3 $f -m "$1" > /dev/fb0
+  fi
+}
 
 cmd=$1
-
+echo "Xact Run"
+echo "$@"
 if [ ! $cmd ]; then
   echo No command specified, exiting
+elif [ $cmd == "logo" ]; then
+  set -x # Show commands
+  disp
+elif [ $cmd == "disp" ]; then
+  set -x # Show commands
+  disp "${2}"
+elif [ $cmd == "disable" ]; then
+  set -x # Show commands
+  systemctl disable $2
+  systemctl stop $2 || true
+elif [ $cmd == "enable" ]; then
+  systemctl start $2
+  systemctl enable $2
+elif [ $cmd == "extract-init-zip" ]; then
+  set -x # Show commands
+  disp "Extracting Initialize_SD_Card"
+  mkdir /tmp/init || true
+  unzip /usr/share/xact/card1/Initialize_SD_Card*zip -d /tmp/init
+elif [ $cmd == "copy-etc-files" ]; then
+  set -x # Show commands
+  cp -R /tmp/init/fs/* /
+elif [ $cmd == "username" ]; then
+  set -x # Show commands
+  echo TODO 
+elif [ $cmd == "set-smsc-mac" ]; then
+  set -x # Show commands
+  MAC=`cat /sys/class/net/ethernet0/address`
+  echo Setting kernel macaddr to $MAC
+  disp "Setting SMSC95xx MAC address\nmacaddr=$MAC"
+  sed -i "s/bootargs=/bootargs=macaddr=$MAC /g" uEnv.txt 
 elif [ $cmd == "hostname" ]; then
-  hostname=$2
+  set -x # Show commands
+  hostname=`cat /etc/xact/machineSerial | sed "s/:/-/g"`
   if [ $hostname ]; then
     echo Setting hostname to $hostname
     hostname $hostname
     echo $hostname > /etc/hostname
   fi
 elif [ $cmd == "reboot" ]; then
+  set -x # Show commands
   systemctl reboot
-elif [ $cmd == "init_docker" ]; then
-  $fil="/run/xact/card1/docker_import.tar"
-  if [ -f $fil ]; then
-    echo Importing docker container $fil
-  fi
+elif [ $cmd == "docker-load" ]; then
+  set -x # Show commands
+  fil="/usr/share/xact/card1/$2"
+  container_name_file=`mktemp`
+  disp "Loading container $2\\n"
+  # Use script to simulate interactive terminal
+  script --return --quiet -c "docker load -i $fil" /dev/null | while read -r text; do
+    echo $text | sed 's/\x1B\[[0-9;]\{1,\}[A-Za-z]//g' | strings | while read -r text2; do
+      disp "Loading container $2\\n$text2"
+      echo $text2
+      if [[ $text2 == Loaded\ image:* ]]; then
+	# Something strange happens in bash while where I can't export the variable outside the loop
+        container_name=`echo $text2 | awk '{print $NF}'`
+	echo $container_name > $container_name_file
+      fi
+    done
+  done
+  sleep 1
+  container_name=`cat $container_name_file`
+  rm $container_name_file
+  disp "Using image $container_name\\nSetting up container '$4'\\n$3"
+  sleep 1
+  [[ ! -f /usr/share/xact/card1/$3  ]] && disp "Failed to read docker.create file\\n$3" && sleep 1 && exit 1
+  create_args=`head -1 /usr/share/xact/card1/$3`
+  docker create $create_args --name $4 $container_name
+  disp "Successfully created container '$4'"
+elif [ $cmd == "docker-setup" ]; then
+  set -x # Show commands
+  echo $2 > /etc/xact/docker-container-name
+elif [ $cmd == "docker-stop" ]; then
+  set -x # Show commands
+  docker stop `cat /etc/xact/docker-container-name` 
+elif [ $cmd == "docker-start" ]; then
+  set -x # Show commands
+  docker start `cat /etc/xact/docker-container-name` 
+elif [ $cmd == "docker-exec" ]; then
+  set -x # Show commands
+  docker exec -it `cat /etc/xact/docker-container-name` bash -c "$2"
+elif [ $cmd == "docker-install-debs" ]; then
+  set -x # Show commands
+  for file in /tmp/init/debs/*.deb; do
+    bn=$(basename -- "$file")
+    echo "Processing $file"
+    disp "Installing $bn"
+    docker exec -it `cat /etc/xact/docker-container-name` bash -c "dpkg --no-debsig -i /torizon$file"
+  done
+  disp "Done installing packages"
+elif [ $cmd == "docker-launch" ]; then
+  set -x # Show commands
+  disp
+  docker exec -d -it `cat /etc/xact/docker-container-name` /usr/share/xact/init/init-toradex.sh
+elif [ $cmd == "sleep" ]; then
+  set -x # Show commands
+  sleep $2
+else
+  exit 1
 fi
 
