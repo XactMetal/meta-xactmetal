@@ -2,7 +2,7 @@ SUMMARY = "Xact init script for systemd"
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COREBASE}/meta/files/common-licenses/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
-RDEPENDS_${PN}="bash"
+RDEPENDS_${PN}="bash python3-core python3-mmap"
 
 SRC_URI = " \
            file://xact-init.service \
@@ -10,6 +10,7 @@ SRC_URI = " \
            file://xact-init-img \
            file://xact-init \
            file://xact-run \
+           file://xact-commands-txt.py \
            "
 
 # Change directory to sources 
@@ -23,6 +24,7 @@ do_install() {
   install -m 0755 ${S}/xact-run ${D}${bindir}
   install -m 0755 ${S}/xact-init ${D}${bindir}
   install -m 0755 ${S}/xact-init-img ${D}${bindir}
+  install -m 0755 ${S}/xact-commands-txt.py ${D}${bindir}
   install -D -p -m0644 ${WORKDIR}/xact-init.service ${D}${systemd_system_unitdir}/xact-init.service
   install -D -p -m0644 ${WORKDIR}/xact-splash.service ${D}${systemd_system_unitdir}/xact-splash.service
 }
@@ -31,7 +33,7 @@ inherit features_check systemd
 
 FILES_${PN} += "{systemd_system_unitdir}/xact-init.service \
            {systemd_system_unitdir}/xact-splash.service \
-           ${bindir}/xact-run \
+           ${bindir}/xact-commands-txt.py \
            ${bindir}/xact-run \
            ${bindir}/xact-init \
            ${bindir}/xact-init-img \
