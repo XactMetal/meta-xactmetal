@@ -1,9 +1,11 @@
 [Unit]
 Description=Xact Boot Splash
+After=local-fs.target
+Before=xact-init.service
 
 [Service]
 StandardError=journal
-ExecStart=/bin/bash -c xact-run logo
+ExecStart=/bin/bash -c "xact-run logo"
 
 [Install]
 WantedBy=basic.target

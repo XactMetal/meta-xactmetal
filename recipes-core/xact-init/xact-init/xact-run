@@ -49,7 +49,7 @@ elif [ $cmd == "set-smsc-mac" ]; then
   MAC=`cat /sys/class/net/ethernet0/address`
   echo Setting kernel macaddr to $MAC
   disp "Setting SMSC95xx MAC address\nmacaddr=$MAC"
-  sed -i "s/bootargs=/bootargs=macaddr=$MAC /g" uEnv.txt 
+  sed -i "s/bootargs=quiet/bootargs=quiet macaddr=$MAC/g" /boot/loader/uEnv.txt 
 elif [ $cmd == "hostname" ]; then
   set -x # Show commands
   hostname=`cat /etc/xact/machineSerial | sed "s/:/-/g"`
@@ -105,7 +105,7 @@ elif [ $cmd == "docker-install-debs" ]; then
     bn=$(basename -- "$file")
     echo "Processing $file"
     disp "Installing $bn"
-    docker exec -it `cat /etc/xact/docker-container-name` bash -c "dpkg --no-debsig -i /torizon$file"
+    docker exec -i `cat /etc/xact/docker-container-name` bash -c "dpkg --no-debsig -i /torizon$file"
   done
   disp "Done installing packages"
 elif [ $cmd == "docker-launch" ]; then

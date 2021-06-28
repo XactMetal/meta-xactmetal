@@ -1,6 +1,7 @@
 [Unit]
 Description=Xact Boot Script
-After=boot-complete.target usr-share-xact-card1.mount
+Requires=basic.target
+Wants=usr-share-xact-card1.mount
 
 [Service]
 StandardError=journal
