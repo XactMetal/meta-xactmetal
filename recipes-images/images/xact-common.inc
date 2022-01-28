@@ -114,7 +114,7 @@ CORE_IMAGE_BASE_INSTALL_append_mx8 = " \
     kernel-module-imx-gpu-viv \
 "
 
-OSTREE_KERNEL_ARGS = "quiet logo.nologo console=ttynull video=HDMI-A-1:${XACT_FS_RESOLUTION} vt.global_cursor_default=0 plymouth.ignore-serial-consoles splash"
+OSTREE_KERNEL_ARGS = "quiet logo.nologo console=ttynull vt.global_cursor_default=0 plymouth.ignore-serial-consoles splash"
 
 # include nss-altfiles support
 CORE_IMAGE_BASE_INSTALL_append = ' ${@bb.utils.contains("DISTRO_FEATURES", "stateless-system", "nss-altfiles", "",d)}'
