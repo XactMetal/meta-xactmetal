@@ -3,9 +3,9 @@ set -e # Exit on fail
 set -o pipefail # Exit on fail within pipe
 
 disp () {
-  res=`cat /etc/xact/screenResolution`
-  res2=(${res/x/ })
-  res3=${res##*x}
+  res=`cat /sys/class/graphics/fb0/virtual_size`
+  res2=(${res/,/ })
+  res3=${res##*,}
   [[ -f /etc/xact/flipScreen ]] && f="-x -y" || f=""
 
   if [ -z ${1+x} ]; then
