@@ -44,6 +44,12 @@ elif [ $cmd == "copy-etc-files" ]; then
 elif [ $cmd == "username" ]; then
   set -x # Show commands
   echo TODO 
+elif [ $cmd == "set-kern-res" ]; then
+  set -x # Show commands
+  KRES=`cat /etc/xact/screenResolution`
+  echo Setting kernel res to $KRES
+  disp "Setting kernel res\nvideo=HDMI-A-1:$KRES"
+  sed -i "s/bootargs=quiet/bootargs=quiet video=HDMI-A-1:$KRES/g" /boot/loader/uEnv.txt 
 elif [ $cmd == "set-smsc-mac" ]; then
   set -x # Show commands
   MAC=`cat /sys/class/net/ethernet0/address`
