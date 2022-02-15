@@ -44,6 +44,9 @@ elif [ $cmd == "copy-etc-files" ]; then
 elif [ $cmd == "username" ]; then
   set -x # Show commands
   echo TODO 
+elif [ $cmd == "fix-null-tty" ]; then
+  set -x # Show commands
+  sed -i "s/console=ttynull/console=ttyLP1/g" /boot/loader/uEnv.txt 
 elif [ $cmd == "set-kern-res" ]; then
   set -x # Show commands
   KRES=`cat /etc/xact/screenResolution`
