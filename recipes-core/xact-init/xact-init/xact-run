@@ -69,7 +69,12 @@ elif [ $cmd == "hostname" ]; then
   fi
 elif [ $cmd == "reboot" ]; then
   set -x # Show commands
-  systemctl reboot
+  disp "Rebooting..."
+  sync /usr/share/xact/card1
+  sync /
+  sync /etc
+  sync
+  bash -c "sleep 3 && systemctl reboot" &
 elif [ $cmd == "docker-load" ]; then
   set -x # Show commands
   fil="/usr/share/xact/card1/$2"
