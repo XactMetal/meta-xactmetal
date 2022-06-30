@@ -125,7 +125,7 @@ elif [ $cmd == "docker-install-debs" ]; then
 elif [ $cmd == "docker-launch" ]; then
   set -x # Show commands
   disp
-  docker exec -d -it `cat /etc/xact/docker-container-name` /usr/share/xact/init/init-toradex.sh
+  docker exec -it `cat /etc/xact/docker-container-name` /usr/share/xact/init/init-toradex.sh
 elif [ $cmd == "sleep" ]; then
   set -x # Show commands
   sleep $2

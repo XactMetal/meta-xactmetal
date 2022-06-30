@@ -4,9 +4,11 @@ Requires=basic.target
 Wants=usr-share-xact-card1.mount
 
 [Service]
+Type=oneshot
+RemainAfterExit=yes
 StandardError=journal
-ExecStart=/bin/bash -c xact-init
+ExecStart=/bin/bash -c 'xact-run docker-stop && screen -X -S touchscreen quit || true && screen -S touchscreen -dm xact-init'
+ExecStop=/bin/bash -c 'xact-run docker-stop && screen -X -S touchscreen quit'
 
 [Install]
 WantedBy=multi-user.target
-
