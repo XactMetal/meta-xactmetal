@@ -2,8 +2,8 @@
 Description=Persistent Log Storage Bind
 
 [Mount]
-What=/usr/share/xact/ssd/journal
-Where=/var/log/journal
+What=/usr/share/xact/ssd/log
+Where=/run/logp
 Type=none
 Options=bind
 

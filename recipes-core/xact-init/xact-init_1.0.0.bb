@@ -7,7 +7,8 @@ RDEPENDS_${PN}="bash python3-core python3-mmap"
 SRC_URI = " \
            file://xact-init.service \
            file://xact-splash.service \
-           file://var-log-journal.mount \
+           file://init-journal.service \
+           file://run-logp.mount \
            file://10-xact-tmpfiles.conf \
            file://00-xact-journald.conf \
            file://xact-init-img \
@@ -36,14 +37,16 @@ do_install() {
   install -m 0644 ${S}/00-xact-journald.conf ${D}${sysconfdir}/systemd/journald.conf.d
   install -D -p -m0644 ${WORKDIR}/xact-init.service ${D}${systemd_system_unitdir}/xact-init.service
   install -D -p -m0644 ${WORKDIR}/xact-splash.service ${D}${systemd_system_unitdir}/xact-splash.service
-  install -D -p -m0644 ${WORKDIR}/var-log-journal.mount ${D}${systemd_system_unitdir}/var-log-journal.mount
+  install -D -p -m0644 ${WORKDIR}/init-journal.service ${D}${systemd_system_unitdir}/init-journal.service
+  install -D -p -m0644 ${WORKDIR}/run-logp.mount ${D}${systemd_system_unitdir}/run-logp.mount
 }
 
 inherit features_check systemd
 
 FILES_${PN} += "{systemd_system_unitdir}/xact-init.service \
            {systemd_system_unitdir}/xact-splash.service \
-           {systemd_system_unitdir}/var-log-journal.mount \
+           {systemd_system_unitdir}/init-journal.service \
+           {systemd_system_unitdir}/run-logp.mount \
            ${sysconfdir}/tmpfiles.d/10-xact-tmpfiles.conf \
            ${sysconfdir}/systemd/journald.conf.d/00-xact-journald.conf \
            ${bindir}/xact-commands-txt.py \
@@ -52,5 +55,5 @@ FILES_${PN} += "{systemd_system_unitdir}/xact-init.service \
            ${bindir}/xact-init-img \
            "
 
-SYSTEMD_SERVICE_${PN} = "xact-init.service xact-splash.service var-log-journal.mount"
+SYSTEMD_SERVICE_${PN} = "xact-init.service xact-splash.service init-journal.service run-logp.mount"
 SYSTEMD_AUTO_ENABLE = "enable"

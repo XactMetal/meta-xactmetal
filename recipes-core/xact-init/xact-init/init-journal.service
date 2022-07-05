@@ -1,0 +1,11 @@
+[Unit]
+Description=Init persistent journal
+After=local-fs.target
+
+[Service]
+ExecStartPre=/bin/sleep 10
+ExecStart=/bin/bash -c "journalctl --flush"
+
+[Install]
+WantedBy=multi-user.target
+
