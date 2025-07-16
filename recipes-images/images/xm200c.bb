@@ -7,12 +7,11 @@ XACT_FS_RESOLUTION = "1024x600"
 XACT_MACHINE_ID = "XM200C_Ext"
 XACT_MACHINE_PRODUCT = "XM200C"
 
+VIRTUAL-RUNTIME_container_engine = "docker"
+
 require xact-common.inc
 
-CORE_IMAGE_BASE_INSTALL_append = " \
-    docker-ce \
-    python3-docker-compose \
-    docker-compose-up \
+CORE_IMAGE_BASE_INSTALL:append = " \
     xact-filesystem \
     xact-init \
 "
