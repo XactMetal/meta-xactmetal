@@ -43,10 +43,13 @@ do_install() {
 
 inherit features_check systemd
 
-FILES_${PN} += "{systemd_system_unitdir}/xact-init.service \
-           {systemd_system_unitdir}/xact-splash.service \
-           {systemd_system_unitdir}/init-journal.service \
-           {systemd_system_unitdir}/run-logp.mount \
+FILES_${PN} += "${sysconfdir} \
+           ${sysconfdir}/systemd \
+           ${systemd_system_unitdir} \
+           ${systemd_system_unitdir}/xact-init.service \
+           ${systemd_system_unitdir}/xact-splash.service \
+           ${systemd_system_unitdir}/init-journal.service \
+           ${systemd_system_unitdir}/run-logp.mount \
            ${sysconfdir}/tmpfiles.d/10-xact-tmpfiles.conf \
            ${sysconfdir}/systemd/journald.conf.d/00-xact-journald.conf \
            ${bindir}/xact-commands-txt.py \
