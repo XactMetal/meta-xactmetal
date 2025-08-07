@@ -2,7 +2,7 @@ SUMMARY = "Xact init script for systemd"
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COREBASE}/meta/files/common-licenses/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
-RDEPENDS_${PN}="bash python3-core python3-mmap"
+RDEPENDS:${PN}="bash python3-core python3-mmap"
 
 SRC_URI = " \
            file://xact-init.service \
@@ -43,7 +43,7 @@ do_install() {
 
 inherit features_check systemd
 
-FILES_${PN} += "${sysconfdir} \
+FILES:${PN} += "${sysconfdir} \
            ${sysconfdir}/systemd \
            ${systemd_system_unitdir} \
            ${systemd_system_unitdir}/xact-init.service \
@@ -58,5 +58,5 @@ FILES_${PN} += "${sysconfdir} \
            ${bindir}/xact-init-img \
            "
 
-SYSTEMD_SERVICE_${PN} = "xact-init.service xact-splash.service init-journal.service run-logp.mount"
+SYSTEMD_SERVICE:${PN} = "xact-init.service xact-splash.service init-journal.service run-logp.mount"
 SYSTEMD_AUTO_ENABLE = "enable"

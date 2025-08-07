@@ -81,56 +81,55 @@ CORE_IMAGE_BASE_INSTALL:append:common-torizon-distro = " \
 # in the rootfs. Firmware blobs, generally speaking, cannot be loaded
 # from containers as their kernel module counterparts generally expect
 # the files to be in an specific directory (generally /lib/firmware)
-
 nss_altfiles_set_users_groups () {
-        # Make a temporary directory to be used by pseudo to find the real /etc/passwd,/etc/group
-        pseudo_dir=${WORKDIR}/pseudo-rootfs${sysconfdir}
-        override_dir=${IMAGE_ROOTFS}${sysconfdir}
-        nsswitch_conf=${IMAGE_ROOTFS}${sysconfdir}/nsswitch.conf
+	# Make a temporary directory to be used by pseudo to find the real /etc/passwd,/etc/group
+	pseudo_dir=${WORKDIR}/pseudo-rootfs${sysconfdir}
+	override_dir=${IMAGE_ROOTFS}${sysconfdir}
+	nsswitch_conf=${IMAGE_ROOTFS}${sysconfdir}/nsswitch.conf
 
-        sed -i -e '/^passwd/s/$/ altfiles/' -e '/^group/s/$/ altfiles/' -e '/^shadow/s/$/ altfiles/' ${nsswitch_conf}
+	sed -i -e '/^passwd/s/$/ altfiles/' -e '/^group/s/$/ altfiles/' -e '/^shadow/s/$/ altfiles/' ${nsswitch_conf}
 
-        install -d ${pseudo_dir}
-        install -m 644 ${override_dir}/passwd ${pseudo_dir}
-        install -m 644 ${override_dir}/group ${pseudo_dir}
-        install -m 400 ${override_dir}/shadow ${pseudo_dir}
-        cp -a ${pseudo_dir}/* ${IMAGE_ROOTFS}${libdir}
+	install -d ${pseudo_dir}
+	install -m 644 ${override_dir}/passwd ${pseudo_dir}
+	install -m 644 ${override_dir}/group ${pseudo_dir}
+	install -m 400 ${override_dir}/shadow ${pseudo_dir}
+	cp -a ${pseudo_dir}/* ${IMAGE_ROOTFS}${libdir}
 
-        for file in passwd group shadow; do
-                cat > ${override_dir}/${file} <<- EOF
-                        # NSS altfiles module is installed. Default user, group and shadow files are in
-                        # /usr/lib/
-                EOF
-                grep -r torizon ${IMAGE_ROOTFS}${libdir}/${file} >> ${override_dir}/${file}
-        done
+	for file in passwd group shadow; do
+		cat > ${override_dir}/${file} <<- EOF
+			# NSS altfiles module is installed. Default user, group and shadow files are in
+			# /usr/lib/
+		EOF
+		grep -r torizon ${IMAGE_ROOTFS}${libdir}/${file} >> ${override_dir}/${file}
+	done
 }
 
 
 check_xact_filesystem () {
-        echo "TA_iMX8_Linux" > ${IMAGE_ROOTFS}${sysconfdir}/xact/host_platform
-        echo ${XACT_IMAGE_VERSION} > ${IMAGE_ROOTFS}${sysconfdir}/xact/image_version
+	echo "TA_iMX8_Linux" > ${IMAGE_ROOTFS}${sysconfdir}/xact/host_platform
+	echo ${XACT_IMAGE_VERSION} > ${IMAGE_ROOTFS}${sysconfdir}/xact/image_version
 
-        if [ -n "${XACT_MACHINE_PRODUCT}" ]; then
-                echo ${XACT_MACHINE_PRODUCT} > ${IMAGE_ROOTFS}${sysconfdir}/xact/machineProduct
-        else
-                bbwarn "XACT_MACHINE_PRODUCT is missing, must be defined in xm*.bb"
-        fi
+	if [ -n "${XACT_MACHINE_PRODUCT}" ]; then
+		echo ${XACT_MACHINE_PRODUCT} > ${IMAGE_ROOTFS}${sysconfdir}/xact/machineProduct
+	else
+		bbwarn "XACT_MACHINE_PRODUCT is missing, must be defined in xm*.bb"
+	fi
 
-        if [ -n "${XACT_MACHINE_ID}" ]; then
-                echo ${XACT_MACHINE_ID} > ${IMAGE_ROOTFS}${sysconfdir}/xact/machineID
-        else
-                bbwarn "XACT_MACHINE_ID is missing, must be defined in xm*.bb"
-        fi
+	if [ -n "${XACT_MACHINE_ID}" ]; then
+		echo ${XACT_MACHINE_ID} > ${IMAGE_ROOTFS}${sysconfdir}/xact/machineID
+	else
+		bbwarn "XACT_MACHINE_ID is missing, must be defined in xm*.bb"
+	fi
 
-        if [ -n "${XACT_FS_RESOLUTION}" ]; then
-                echo ${XACT_FS_RESOLUTION} > ${IMAGE_ROOTFS}${sysconfdir}/xact/screenResolution
-        else
-                bbwarn "XACT_FS_RESOLUTION is missing, must be defined in xm*.bb"
-        fi
-        
-        # Add fstab entries
-        echo "/dev/disk/by-path/platform-5b020000.mmc-part1 /usr/share/xact/card1 auto defaults,sync,noauto 0 0" >> ${IMAGE_ROOTFS}${sysconfdir}/fstab
-        echo "/dev/disk/by-path/platform-5f020000.sata-ata-1-part1 /usr/share/xact/ssd/ ext4 auto,defaults,noatime,noauto 0 0" >> ${IMAGE_ROOTFS}${sysconfdir}/fstab
+	if [ -n "${XACT_FS_RESOLUTION}" ]; then
+		echo ${XACT_FS_RESOLUTION} > ${IMAGE_ROOTFS}${sysconfdir}/xact/screenResolution
+	else
+		bbwarn "XACT_FS_RESOLUTION is missing, must be defined in xm*.bb"
+	fi
+	
+	# Add fstab entries
+	echo "/dev/disk/by-path/platform-5b020000.mmc-part1 /usr/share/xact/card1 auto defaults,sync,noauto 0 0" >> ${IMAGE_ROOTFS}${sysconfdir}/fstab
+	echo "/dev/disk/by-path/platform-5f020000.sata-ata-1-part1 /usr/share/xact/ssd/ ext4 auto,defaults,noatime,noauto 0 0" >> ${IMAGE_ROOTFS}${sysconfdir}/fstab
 }
 
 ROOTFS_POSTPROCESS_COMMAND += "check_xact_filesystem ; "
