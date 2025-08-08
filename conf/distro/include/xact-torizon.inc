@@ -1,5 +1,5 @@
 require conf/distro/include/tdx-base.inc
-require base-distro.inc
+require conf/distro/include/base-distro.inc
 
 IMAGE_CLASSES:append = " image_type_torizon"
 IMAGE_CLASSES:remove = "image_type_tezi"
