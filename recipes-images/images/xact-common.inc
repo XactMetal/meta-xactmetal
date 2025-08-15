@@ -15,7 +15,11 @@ IMAGE_NAME = "${IMAGE_BASENAME}${IMAGE_BASENAME_SUFFIX}-${MACHINE}${IMAGE_VERSIO
 IMAGE_LINK_NAME = "${IMAGE_BASENAME}${IMAGE_BASENAME_SUFFIX}-${MACHINE}"
 
 XACT_IMAGE_VERSION = "2"
-    
+
+CORE_IMAGE_BASE_INSTALL:remove = " \
+    kernel-module-galcore \
+"
+
 # Base packages
 CORE_IMAGE_BASE_INSTALL:append = " \
     cpupower \
