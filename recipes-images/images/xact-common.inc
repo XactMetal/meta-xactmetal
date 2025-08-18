@@ -37,6 +37,7 @@ CORE_IMAGE_BASE_INSTALL:append = " \
     kernel-devsrc \
     kernel-modules \
     kernel-module-imx-gpu-viv \
+    imx-gpu-viv \
     ldd \
     less \
     libpwquality \
