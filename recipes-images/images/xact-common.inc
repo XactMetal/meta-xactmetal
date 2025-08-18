@@ -133,8 +133,8 @@ check_xact_filesystem () {
 	fi
 	
 	# Add fstab entries
-	echo "/dev/disk/by-path/platform-5b020000.mmc-part1 /usr/share/xact/card1 auto defaults,sync,noauto 0 0" >> ${IMAGE_ROOTFS}${sysconfdir}/fstab
-	echo "/dev/disk/by-path/platform-5f020000.sata-ata-1-part1 /usr/share/xact/ssd/ ext4 auto,defaults,noatime,noauto 0 0" >> ${IMAGE_ROOTFS}${sysconfdir}/fstab
+	echo "/dev/disk/by-path/platform-5b020000.mmc-part1 /usr/share/xact/card1 auto defaults,sync,noauto,x-systemd.mount-timeout=15 0 0" >> ${IMAGE_ROOTFS}${sysconfdir}/fstab
+	echo "/dev/disk/by-path/platform-5f020000.sata-ata-1-part1 /usr/share/xact/ssd/ ext4 auto,defaults,noatime,noauto,x-systemd.mount-timeout=15 0 0" >> ${IMAGE_ROOTFS}${sysconfdir}/fstab
 
     # Fix sudoers
     chown 0 ${IMAGE_ROOTFS}${sysconfdir}/sudoers.d/50-torizon || true
