@@ -11,7 +11,7 @@ SRC_URI:append = " \
 
 SRC_URI:append:genericx86-64 = " file://0001-rules-whitelist-hd-devices.patch"
 
-PACKAGECONFIG:append = " resolved networkd"
+PACKAGECONFIG:append = " resolved networkd iptc"
 RRECOMMENDS:${PN}:remove = "os-release"
 
 # /var is expected to be rw, so drop volatile-binds service files
