@@ -37,7 +37,8 @@ CORE_IMAGE_BASE_INSTALL:append = " \
     kernel-devsrc \
     kernel-modules \
     kernel-module-imx-gpu-viv \
-    imx-gpu-viv \
+    libgles1-imx libgles1-imx-dev libgles2-imx libgles2-imx-dev libgles3-imx-dev libclc-imx libopencl-imx libopencl-imx-dev libegl-imx libegl-imx-dev libgal-imx libgal-imx-dev libgbm-imx libgbm-imx-dev imx-gpu-viv-tools imx-gpu-viv-demos imx-gpu-viv-dev imx-gpu-viv \
+    glibc-dev \
     ldd \
     less \
     libpwquality \
