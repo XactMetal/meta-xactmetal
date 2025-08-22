@@ -129,6 +129,63 @@ elif [ $cmd == "docker-launch" ]; then
 elif [ $cmd == "sleep" ]; then
   set -x # Show commands
   sleep $2
+elif [ $cmd == "cmd" ]; then
+  set -x # Show commands
+  shift # Remove 'cmd' from arguments
+  "$@" # Execute the remaining arguments as a shell command
+elif [ $cmd == "docker-install-deb" ]; then
+  set -x # Show commands
+  deb_name="$2"
+  deb_file="/tmp/init/debs/${deb_name}.deb"
+  if [ ! -f "$deb_file" ]; then
+    echo "Error: Deb file $deb_file not found"
+    exit 1
+  fi
+  echo "Processing $deb_file"
+  disp "Installing $deb_name"
+  docker exec -i `cat /etc/xact/docker-container-name` bash -c "dpkg --no-debsig -i /torizon$deb_file"
+  disp "Done installing $deb_name"
+elif [ $cmd == "backup-etc-xact" ]; then
+  set -x # Show commands
+  disp "Backing up /etc/xact"
+  mkdir -p /usr/share/xact/card1
+  tar -cf /usr/share/xact/card1/etc-xact.tar -C /etc xact
+  disp "Backup complete"
+elif [ $cmd == "restore-etc-xact" ]; then
+  set -x # Show commands
+  backup_file="/usr/share/xact/card1/etc-xact.tar"
+  if [ ! -f "$backup_file" ]; then
+    echo "Error: Backup file $backup_file not found"
+    exit 1
+  fi
+  disp "Restoring /etc/xact from backup"
+  tar -xf "$backup_file" -C /etc
+  disp "Restore complete"
+elif [ $cmd == "require-os-version-range" ]; then
+  set -x # Show commands
+  min_version="$2"
+  max_version="$3"
+  version_file="/etc/xact/image_version"
+  
+  if [ ! -f "$version_file" ]; then
+    echo "Error: Version file $version_file not found"
+    exit 1
+  fi
+  
+  current_version=$(cat "$version_file")
+  
+  # Check if current version is within range [min_version, max_version]
+  if [ "$current_version" -lt "$min_version" ] || [ "$current_version" -gt "$max_version" ]; then
+    echo "Error: OS version $current_version is outside required range [$min_version, $max_version]"
+    exit 1
+  fi
+  
+  echo "OS version $current_version is within required range [$min_version, $max_version]"
+elif [ $cmd == "delete-bootstrap" ]; then
+  set -x # Show commands
+  disp "Deleting bootstrap"
+  rm -f /usr/local/bin/xact-run
+  disp "Bootstrap deleted"
 else
   exit 1
 fi
